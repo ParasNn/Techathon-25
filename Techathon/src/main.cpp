@@ -1,18 +1,28 @@
 #include <Arduino.h>
+#include <SoftwareSerial.h>
+
+//setup for IO pins -- BTSerial
+const byte rxPin = 10;
+const byte txPin = 11;
+SoftwareSerial BTSerial(rxPin, txPin);
 
 // put function declarations here:
 
-void setup() {
-  pinMode(9, OUTPUT); // Set pin 9 as an output
+void setup()
+{
+  //pin setup for bluetooth
+  pinMode(rxPin, INPUT);
+  pinMode(txPin, OUTPUT);
+
+  BTSerial.begin(9600);
+  Serial.begin(9600);
+
 }
 
-void loop() {
-  for (int brightness = 0; brightness <= 255; brightness++) { 
-    analogWrite(9, brightness); // Set LED brightness (0-255)
-    delay(10); // Small delay for smooth transition
-  }
-  for (int brightness = 255; brightness >= 0; brightness--) { 
-    analogWrite(9, brightness); // Dim the LED down
-    delay(10);
+void loop()
+{
+  if (BTSerial.available()) {
+    char c = BTSerial.read();
+    Serial.write(c);
   }
 }
