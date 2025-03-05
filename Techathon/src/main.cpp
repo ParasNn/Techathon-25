@@ -25,4 +25,7 @@ void loop()
     char c = BTSerial.read();
     Serial.write(c);
   }
+  if (Serial.available()) {
+    BTSerial.write("h");
+  }
 }
