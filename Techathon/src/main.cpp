@@ -89,33 +89,47 @@ void setup()
   // Begin the regular serial communication at 9600 baud rate (for debugging)
   Serial.begin(9600);
 }
-
+bool recieving = true;
 void loop()
 {
   // Check if we have connection with the Bluetooth device
-  if (BTSerial.available()) {
-    // Bluetooth module is reading data and check for inWord
-    char c = BTSerial.read();
-
-    if (c == ' ' || c == '\n' || c == '\r') {
-      if (inWord.length() > 0) {
-        Serial.print("Received Word: " + inWord + " \n");
-        commands[commPtr++] = inWord;
-        inWord = ""; // Clear the inWord for the next one
+  
+  while (recieving)
+  {
+    while(BTSerial.available()) {
+      // Bluetooth module is reading data and check for inWord
+      inWord += "" + BTSerial.read() ; // Add character to the inWord
+      recieving = false;
+    }
+    //Serial.print("sup ");
+  }
+  while(!recieving){
+    while(Serial.available()){
+      String handle = "";
+      Serial.print(inWord);
+      for(int i = 0; i < inWord.length(); i++){
+        char current = inWord.charAt(i);
+        if (current == ' ' || current == '\n' || current == '\r') {
+          if(handle.length() == 0){
+            continue;
+          }
+          Serial.print("Received Word: " + handle + " \n");
+          commands[commPtr++] = handle;
+          handle = "";
+          continue;
+        }
+        handle += current;
       }
+      inWord = "";
+      for (int i = 0; i < commPtr; i++) {
+        Serial.println("HI");
+        wordChecker(commands[i]);
+      }
+      commPtr = 0;
+      recieving = true;
     }
-    else {
-      inWord += c; // Add character to the inWord
-    }
-  // Check for end of inWord (space or newline)
-
+    
   }
-  else {
-    for (int i = 0; i < commPtr; i++) {
-      Serial.println("HI");
-      wordChecker(commands[i]);
-    }
-    commPtr = 0;
-  }
+    
 
 }
