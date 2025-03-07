@@ -12,6 +12,9 @@ String inWord = "";
 String Password = "Pass";
 bool passAccept = false;
 
+String commands[10];
+int commPtr = 0;
+
 SoftwareSerial BTSerial(rxPin, txPin);  // Create a SoftwareSerial object for Bluetooth communication
 
 void passChecker(String wordIn)
@@ -94,24 +97,25 @@ void loop()
     // Bluetooth module is reading data and check for inWord
     char c = BTSerial.read();
 
-    // Check for end of inWord (space or newline)
     if (c == ' ' || c == '\n' || c == '\r') {
       if (inWord.length() > 0) {
-        Serial.print("Received Word: ");
-        Serial.println(inWord);
-        wordChecker(inWord);
+        Serial.print("Received Word: " + inWord + " \n");
+        commands[commPtr++] = inWord;
         inWord = ""; // Clear the inWord for the next one
       }
     }
     else {
       inWord += c; // Add character to the inWord
     }
+  // Check for end of inWord (space or newline)
+
+  }
+  else {
+    for (int i = 0; i < commPtr; i++) {
+      Serial.println("HI");
+      wordChecker(commands[i]);
+    }
+    commPtr = 0;
   }
 
-  // Check if data is available from the Serial Monitor
-  if (Serial.available()) {
-    // Read the data from the Serial Monitor and send it to the Bluetooth device
-    char c = Serial.read();  // Read the character from the Serial Monitor
-    BTSerial.print(c);  // Send the character to the Bluetooth device
-  }
 }
