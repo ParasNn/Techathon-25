@@ -1,10 +1,12 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
+#include <String.h>
 
 // Setup for IO pins -- BTSerial
 const byte rxPin = 10;  // RX pin of HC-05
 const byte txPin = 11;  // TX pin of HC-05
 const int ledPin = 13;
+String inWord = "";
 
 SoftwareSerial BTSerial(rxPin, txPin);  // Create a SoftwareSerial object for Bluetooth communication
 
@@ -23,21 +25,21 @@ void setup()
 
 void loop()
 {
-  // Check if data is available from the Bluetooth device
+  // Check if we have connection with the Bluetooth device
   if (BTSerial.available()) {
-    // Read the data from Bluetooth and check for word
+    // Bluetooth module is reading data and check for inWord
     char c = BTSerial.read();
 
-    // Check for end of word (space or newline)
+    // Check for end of inWord (space or newline)
     if (c == ' ' || c == '\n' || c == '\r') {
-      if (word.length() > 0) {
-        Serial.print("Received word: ");
-        Serial.println(word);
-        word = ""; // Clear the word for the next one
+      if (inWord.length() > 0) {
+        Serial.print("Received inWord: ");
+        Serial.println(inWord);
+        inWord = ""; // Clear the inWord for the next one
       }
     }
     else {
-      word += c; // Add character to the word
+      inWord += c; // Add character to the inWord
     }
   }
 
