@@ -51,12 +51,14 @@ bool lightTool(String wordIn, bool lightMode)
     }
     else {
       BTSerial.print("No command found");
+      return true;
     }
   }
   else if (wordIn.equals("Light")) {
     BTSerial.print("Light mode");
     return true;
   }
+  return false;
 }
 
 void wordChecker(String wordIn)
@@ -97,7 +99,16 @@ void loop()
     // Bluetooth module is reading data and check for inWord
     char c = BTSerial.read();
 
-    if (c == ' ' || c == '\n' || c == '\r') {
+    if (c == '-') {
+      for (int i = 0; i < commPtr; i++) {
+        wordChecker(commands[i]);
+      }
+      Serial.print("Received Word: " + inWord + " \n");
+      wordChecker(inWord);
+      inWord = "";
+      commPtr = 0;
+    }
+    else if (c == ' ' || c == '\n' || c == '\r') {
       if (inWord.length() > 0) {
         Serial.print("Received Word: " + inWord + " \n");
         commands[commPtr++] = inWord;
@@ -110,12 +121,4 @@ void loop()
   // Check for end of inWord (space or newline)
 
   }
-  else {
-    for (int i = 0; i < commPtr; i++) {
-      Serial.println("HI");
-      wordChecker(commands[i]);
-    }
-    commPtr = 0;
-  }
-
 }
