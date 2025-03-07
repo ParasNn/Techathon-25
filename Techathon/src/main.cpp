@@ -25,16 +25,19 @@ void loop()
 {
   // Check if data is available from the Bluetooth device
   if (BTSerial.available()) {
-    // Read the data from Bluetooth and send it to the Serial Monitor
-    int c = BTSerial.read();
-    //turn on LED based on phone input
-    if (c == 1) {
-      digitalWrite(ledPin, 1);
-      Serial.println("led on\n");
+    // Read the data from Bluetooth and check for word
+    char c = BTSerial.read();
+
+    // Check for end of word (space or newline)
+    if (c == ' ' || c == '\n' || c == '\r') {
+      if (word.length() > 0) {
+        Serial.print("Received word: ");
+        Serial.println(word);
+        word = ""; // Clear the word for the next one
+      }
     }
-    else if (c == 0) {
-      digitalWrite(ledPin, 0);
-      Serial.println("led off\n");
+    else {
+      word += c; // Add character to the word
     }
   }
 
