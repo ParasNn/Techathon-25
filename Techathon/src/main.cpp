@@ -12,6 +12,7 @@ const byte buzzerPin = 7; // buzzer
 
 String inWord = "";
 String Password = "Pass";
+String fullWord = "";
 bool passAccept = false;
 
 String commands[10];
@@ -98,10 +99,33 @@ void setup()
   Serial.begin(9600);
 }
 
-void loop()
-{
+
+void parser(String fullInput){
+  String helperWord = "";
+  
+  for(int i =0; i<fullInput.length(); i++){
+
+    if (fullInput.charAt(i) == ' ' || fullInput.charAt(i)  == '\n' || fullInput.charAt(i)  == '\r' || fullInput.charAt(i) == '!') {
+      if (helperWord.length() > 0) {
+        wordChecker(helperWord);
+        helperWord = ""; // Clear the fullInput for the next one
+      }
+    }
+    else {
+      helperWord += fullInput.charAt(i); // Add character to the fullInput
+    }
+  }
+
+  fullInput = "";
+  wordDone = false;
+}
+
+
+
+
+void btHandle() {
   // Check if we have connection with the Bluetooth device
-  if (BTSerial.available()) {
+  while(BTSerial.available()) {
     // Bluetooth module is reading data and check for inWord
     Serial.print("test");
     char c = BTSerial.read();
@@ -121,6 +145,7 @@ void loop()
         commands[commPtr++] = inWord;
         inWord = ""; // Clear the inWord for the next one
       }
+      return;
     }
     else {
       inWord += c; // Add character to the inWord
