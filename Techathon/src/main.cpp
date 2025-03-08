@@ -99,7 +99,7 @@ void loop()
     // Bluetooth module is reading data and check for inWord
     char c = BTSerial.read();
 
-    if (c == '-') {
+    if (c == '.') {
       for (int i = 0; i < commPtr; i++) {
         wordChecker(commands[i]);
       }
