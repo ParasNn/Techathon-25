@@ -3,10 +3,12 @@
 #include <String.h>
 
 // Setup for IO pins -- BTSerial
+const byte rxPin2 = 8;
+const byte txPin2 = 9;
 const byte rxPin = 10;    // RX pin of HC-05
 const byte txPin = 11;    // TX pin of HC-05
 const byte ledPin = 13;   // Board LED
-const byte buzzerPin = 8; // buzzer
+const byte buzzerPin = 7; // buzzer
 
 String inWord = "";
 String Password = "Pass";
@@ -16,6 +18,7 @@ String commands[10];
 int commPtr = 0;
 
 SoftwareSerial BTSerial(rxPin, txPin);  // Create a SoftwareSerial object for Bluetooth communication
+SoftwareSerial BT2(rxPin2, txPin2);
 
 void passChecker(String wordIn)
 {
@@ -83,11 +86,14 @@ void setup()
   // Pin setup for IO
   pinMode(rxPin, INPUT);
   pinMode(txPin, OUTPUT);
+  pinMode(rxPin2, INPUT);
+  pinMode(txPin2, OUTPUT);
   pinMode(ledPin, OUTPUT);
   pinMode(buzzerPin, OUTPUT);
 
   // Begin Bluetooth serial communication at 9600 baud rate
   BTSerial.begin(9600);
+  BT2.begin(9600);
   // Begin the regular serial communication at 9600 baud rate (for debugging)
   Serial.begin(9600);
 }
@@ -97,6 +103,7 @@ void loop()
   // Check if we have connection with the Bluetooth device
   if (BTSerial.available()) {
     // Bluetooth module is reading data and check for inWord
+    Serial.print("test");
     char c = BTSerial.read();
 
     if (c == '.') {
