@@ -39,10 +39,8 @@ void loop() {
 
     while(BTSerial.available()) {
     // Bluetooth module is reading data and check for inmyWord
-
-            Serial.print("test\n");
-            myWord = BTSerial.readStringUntil(' ');
-        
+        Serial.print("test\n");
+        myWord = BTSerial.readStringUntil(' ');
     }
 
     //int pinState = digitalRead(switchPin);

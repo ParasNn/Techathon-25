@@ -11,10 +11,8 @@ const byte buzzerPin = 7; // buzzer
 
 String inWord = "";
 String Password = "Pass";
-bool passAccept = false;
-
-
 String command = "";
+bool passAccept = false;
 int commPtr = 0;
 
 SoftwareSerial BTSerial(rxPin, txPin);  // Create a SoftwareSerial object for Bluetooth communication
