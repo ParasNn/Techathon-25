@@ -153,14 +153,30 @@ void setup()
   pinMode(ledPin, OUTPUT);
   pinMode(buzzerPin, OUTPUT);
 
-  // Begin Bluetooth serial communication at 9600 baud rate
-  BTSerial.begin(9600);
   // Begin the regular serial communication at 9600 baud rate (for debugging)
   Serial.begin(9600);
+  delay(200);
+  BTSerial.begin(9600); // Now start Bluetooth communication
+  delay(1000);
+  // Print to Serial Monitor to check that the program is running
+  Serial.println("Sending AT command to change name...");
+
+  //Send AT command to change name
+  BTSerial.write("AT+NAME\r\n");
+  //"AT+NAMEtest\r\n"
+
+  // Wait for a short time to allow the Bluetooth module to process the command
+  delay(500);
+
+  Serial.println(BTSerial.readString());
+  // Check for response from the Bluetooth module
+  
+  delay(500);
+  Serial.println("Command sent and response checked.");
 }
 
-void loop()
-{
+void loop(){
+  
   if (BTSerial.available()) {
     command = BTSerial.readString();
     Serial.println("Received: " + command);

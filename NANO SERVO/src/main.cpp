@@ -70,6 +70,7 @@ lastButtonState = pinState;
 if(myWord.equals("Go")){
     digitalWrite(ledPin, HIGH); 
     myServo.write(flipper); // Move to 180 degrees
+    Serial.println("testing");
     delay(2000);
     // Toggle between 180 and 0
     flipper = (flipper == 180) ? 0 : 180;
