@@ -8,6 +8,9 @@ const byte rxPin = 10;    // RX pin of HC-05
 const byte txPin = 11;    // TX pin of HC-05
 const byte ledPin = 13;   // Board LED
 const byte buzzerPin = 7; // buzzer
+// Second AT09 (Master)
+const byte rxPin2 = 8;     // RX pin of AT09 (Master)
+const byte txPin2 = 9;     // TX pin of AT09 (Master)
 
 String inWord = "";
 String Password = "Pass";
@@ -16,6 +19,7 @@ bool passAccept = false;
 int commPtr = 0;
 
 SoftwareSerial BTSerial(rxPin, txPin);  // Create a SoftwareSerial object for Bluetooth communication
+SoftwareSerial BTSerial2(rxPin2, txPin2); // Second AT09 (Master)
 
 struct Node {
   String data;  // Holds the String data
@@ -150,6 +154,8 @@ void setup()
   // Pin setup for IO
   pinMode(rxPin, INPUT);
   pinMode(txPin, OUTPUT);
+  pinMode(rxPin2, INPUT);
+  pinMode(txPin2, OUTPUT);
   pinMode(ledPin, OUTPUT);
   pinMode(buzzerPin, OUTPUT);
 
@@ -157,59 +163,88 @@ void setup()
   Serial.begin(9600);
   delay(200);
   BTSerial.begin(9600); // Now start Bluetooth communication
+  BTSerial2.begin(9600);
   delay(1000);
   // Print to Serial Monitor to check that the program is running
-  Serial.println("Sending AT command to change name...");
+  Serial.println("Sending AT command....");
 
-  //Send AT command to change name
-  BTSerial.write("AT+NAME\r\n");
-  //"AT+NAMEtest\r\n"
-
-  // Wait for a short time to allow the Bluetooth module to process the command
+  //Send AT commands
+  BTSerial2.write("AT\r\n");
   delay(500);
+  Serial.println(BTSerial2.readString());
+  // delay(500);
+  // BTSerial2.write("AT+CONN0x78A50457E9D6\r\n"); // 78A50457E9D6
+  // delay(500);
+  // Serial.println(BTSerial2.readString());
+  delay(500);
+  BTSerial2.write("AT+INQ\r\n"); // 78A50457E9D6
+  delay(1000);
 
-  Serial.println(BTSerial.readString());
+  String bList = BTSerial2.readString();
+  delay(1000);
+  String toFind = "0x78A50457E9D6";
+  Serial.print(bList);
+  delay(1000);
+  Serial.println("---------------------");
+  delay(500);
+  int index = (bList.charAt(bList.indexOf(toFind) - 2)) - 0x30;
+  Serial.println(index);
+  delay(500);
+  Serial.println("---------------------");
+  delay(500);
+  if(index > 0){
+    String temp = "AT+CONN";
+    temp += index;
+    Serial.println(temp);
+    delay(1000);
+    Serial.println("---------------");
+    delay(500);
+    BTSerial2.println(temp); 
+    delay(500);
+    Serial.println(BTSerial2.readString());
+  }else{
+    Serial.println("Device not found");
+  }
   // Check for response from the Bluetooth module
-  
-  delay(500);
+  delay(1000);
   Serial.println("Command sent and response checked.");
 }
 
 void loop(){
   
-  if (BTSerial.available()) {
-    command = BTSerial.readString();
-    Serial.println("Received: " + command);
-    BTSerial.flush();
-  }
+  // if (BTSerial.available()) {
+  //   command = BTSerial.readString();
+  //   Serial.println("Received: " + command);
+  //   BTSerial.flush();
+  // }
 
-  command.trim();
-  int index;
+  // command.trim();
+  // int index;
 
-  while ((index = command.indexOf(' ')) != -1) {
-    // Extract the word before the space
-    String word = command.substring(0, index);
+  // while ((index = command.indexOf(' ')) != -1) {
+  //   // Extract the word before the space
+  //   String word = command.substring(0, index);
     
-    // Only add the word if it's not empty
-    if (word.length() > 0) {
-      commands.add(word);
-    }
-    // Remove the processed part + space
-    command = command.substring(index + 1);
-    command.trim();  // Trim again to remove leading spaces
-  }
+  //   // Only add the word if it's not empty
+  //   if (word.length() > 0) {
+  //     commands.add(word);
+  //   }
+  //   // Remove the processed part + space
+  //   command = command.substring(index + 1);
+  //   command.trim();  // Trim again to remove leading spaces
+  // }
 
-  if (command.length() > 0) {
-    commands.add(command);  // Add the last word (if any)
-  }
+  // if (command.length() > 0) {
+  //   commands.add(command);  // Add the last word (if any)
+  // }
 
-  for (int i = 0; i < commands.getSize(); i++) {
-    String token = commands.get(i);
-    wordChecker(token);
-  }
+  // for (int i = 0; i < commands.getSize(); i++) {
+  //   String token = commands.get(i);
+  //   wordChecker(token);
+  // }
 
-  if(commands.getSize() != 0){
-    commands.clear();
-  }
-  command = "";
+  // if(commands.getSize() != 0){
+  //   commands.clear();
+  // }
+  // command = "";
 }
