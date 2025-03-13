@@ -31,41 +31,20 @@ void setup() {
 
     BTSerial.begin(9600);
     Serial.begin(9600);
-    delay(1000);
-    Serial.println("Enter AT commands:");
     delay(500);
-
-    BTSerial.write("AT\r\n");
-    delay(1000);
-    Serial.print(BTSerial.readString());
-    delay(1000);
-    BTSerial.write("AT+LADDR\r\n");
-    delay(1000);
-    Serial.print(BTSerial.readString());
-    delay(1000);
-
-
-
-    Serial.println("Command sent and response checked.");
+    BTSerial.listen();
 }
 
 String myWord = "";
 void loop() {
-    if (BTSerial.available()) {
-        Serial.write(BTSerial.read()); // Print response from AT09
-      }
-      if (Serial.available()) {
-        BTSerial.println(Serial.read()); // Send AT command
-      }
 
+    while(BTSerial.available()) {
+    // Bluetooth module is reading data and check for inmyWord
+        Serial.print("test\n");
+        myWord = BTSerial.readStringUntil(' ');
+    }
 
-    // while(BTSerial.available()) {
-    // // Bluetooth module is reading data and check for inmyWord
-    //     Serial.print("test\n");
-    //     myWord = BTSerial.readStringUntil(' ');
-    // }
-
-    //int pinState = digitalRead(switchPin);
+   // int pinState = digitalRead(switchPin);
 
 /*
     // If the button state has changed, reset the debounce timer
@@ -91,16 +70,16 @@ lastButtonState = pinState;
 */
 
 
-// if(myWord.equals("Go")){
-//     digitalWrite(ledPin, HIGH); 
-//     myServo.write(flipper); // Move to 180 degrees
-//     Serial.println("testing");
-//     delay(2000);
-//     // Toggle between 180 and 0
-//     flipper = (flipper == 180) ? 0 : 180;
-//     myWord = "";
-// }else{
-//     digitalWrite(ledPin, LOW);
-// }
+if(myWord.equals("Go")){
+    digitalWrite(ledPin, HIGH); 
+    myServo.write(flipper); // Move to 180 degrees
+    Serial.println("testing");
+    delay(2000);
+    // Toggle between 180 and 0
+    flipper = (flipper == 180) ? 0 : 180;
+    myWord = "";
+}else{
+    digitalWrite(ledPin, LOW);
+}
    
 }
