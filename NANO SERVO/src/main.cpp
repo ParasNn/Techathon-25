@@ -9,6 +9,7 @@ const byte rxPin = 10;    // RX pin of HC-05
 const byte txPin = 11;    // TX pin of HC-05
 const byte statePin = 2;
 
+// updated version
 
 Servo myServo;  // Create a Servo object
 int flipper = 180;
