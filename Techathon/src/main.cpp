@@ -9,6 +9,7 @@ const byte txPin = 11;    // TX pin of HC-05
 const byte ledPin = 13;   // Board LED
 const byte buzzerPin = 7; // buzzer
 const byte masterPowerPin = 6; // power the master at09
+const byte phoneStatePin = 5;
 // Second AT09 (Master)
 const byte rxPin2 = 8;     // RX pin of AT09 (Master)
 const byte txPin2 = 9;     // TX pin of AT09 (Master)
@@ -170,13 +171,7 @@ bool lightTool(String wordIn, bool lightMode)
 void wordChecker(String wordIn)
 {
   static bool lightMode = false;
-  if(firstTime){
-    digitalWrite(masterPowerPin, 1);
-    delay(100);
-    searchingIndex = searching((String)"78A50457E9D6");
-    firstTime = false;
-    BTSerial.listen();
-  }
+  
     
   if (passAccept) {
     if (wordIn.equals("Exit")) {
@@ -235,6 +230,7 @@ void setup()
   pinMode(ledPin, OUTPUT);
   pinMode(buzzerPin, OUTPUT);
   pinMode(masterPowerPin, OUTPUT);
+  pinMode(phoneStatePin, INPUT);
 
   // Begin the regular serial communication at 9600 baud rate (for debugging)
   Serial.begin(9600);
@@ -253,6 +249,15 @@ void setup()
 }
 
 void loop(){
+
+  if(firstTime && digitalRead(phoneStatePin) == HIGH){
+    digitalWrite(masterPowerPin, 1);
+    delay(100);
+    searchingIndex = searching((String)"78A50457E9D6");
+    firstTime = false;
+    BTSerial.listen();
+  }
+
   if (BTSerial.available()) {
     //Serial.println("testing");
     command = BTSerial.readString();
