@@ -80,13 +80,13 @@ void loop() {
     //flipper = lock ? 180 : 0;
     //myServo.write(flipper); 
 
-    while(BTSerial.available()) {
-    // Bluetooth module is reading data and check for inmyWord
+    // while(BTSerial.available()) {
+    // // Bluetooth module is reading data and check for inmyWord
         
-        myWord = BTSerial.readString();
-        Serial.println(myWord);
-        BTSerial.println("fuck you master");
-    }
+    //     myWord = BTSerial.readString();
+    //     Serial.println(myWord);
+    //     BTSerial.println("fuck you master");
+    // }
 
    // int pinState = digitalRead(switchPin);
 

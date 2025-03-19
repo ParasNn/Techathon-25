@@ -18,7 +18,8 @@ String inWord = "";
 String Password = "Pass";
 String command = "";
 bool passAccept = false;
-bool firstTime = true;
+bool outside = true;
+bool overwrite = false;
 int commPtr = 0;
 int searchingIndex = -1;
 
@@ -174,12 +175,6 @@ void wordChecker(String wordIn)
   
     
   if (passAccept) {
-    if (wordIn.equals("Exit")) {
-      passAccept = false;
-      firstTime = true;
-      digitalWrite(masterPowerPin, 0);
-      return;
-    }
     lightMode = lightTool(wordIn, lightMode);
 
   }
@@ -250,13 +245,20 @@ void setup()
 
 void loop(){
 
-  if(firstTime && digitalRead(phoneStatePin) == HIGH){
+  if(outside && digitalRead(phoneStatePin) == HIGH){
     digitalWrite(masterPowerPin, 1);
     delay(100);
     searchingIndex = searching((String)"78A50457E9D6");
-    firstTime = false;
+    outside = false;
     BTSerial.listen();
   }
+  if (digitalRead(phoneStatePin) == LOW)
+  {
+    passAccept = false;
+    outside = true;
+    digitalWrite(masterPowerPin, 0);
+  }
+  
 
   if (BTSerial.available()) {
     //Serial.println("testing");
